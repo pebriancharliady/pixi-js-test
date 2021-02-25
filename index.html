@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pixi</title>
+    <script src="js/pixi.min.js"></script>
+  </head>
+  <body></body>
+  <script>
+    let app;
+
+    window.onload = () => {
+      app = new PIXI.Application({
+        width: 800,
+        height: 600,
+        backgroundColor: 0xfafafa,
+      });
+      document.body.appendChild(app.view);
+
+      player = new PIXI.Sprite.from("./images/player.png");
+      player.anchor.set(0.5);
+      player.x = app.view.width / 2;
+      player.y = app.view.height / 2;
+
+      app.stage.addChild(player);
+      app.stage.interactive = true;
+      app.stage.on("pointermove", movePlayer);
+    };
+
+    const movePlayer = (event) => {
+      let position = event.data.global;
+
+      player.x = position.x;
+      player.y = position.y;
+    };
+  </script>
+</html>
