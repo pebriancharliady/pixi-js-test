@@ -7,9 +7,14 @@
     <title>pixi</title>
     <script src="js/pixi.min.js"></script>
   </head>
-  <body></body>
+  <body>
+    <div id="keys"></div>
+  </body>
   <script>
     let app;
+    let player;
+    let keys = {};
+    let keysDiv;
 
     window.onload = () => {
       app = new PIXI.Application({
@@ -19,21 +24,68 @@
       });
       document.body.appendChild(app.view);
 
-      player = new PIXI.Sprite.from("./images/player.png");
+      app.loader.baseUrl = "./images/";
+      app.loader.add("player", "player.png");
+      app.loader.onComplete.add(doneLoading);
+      app.loader.onError.add((err) => console.log(err));
+      app.loader.onProgress.add((e) => console.log(e.progress));
+      app.loader.load();
+
+      //   app.stage.interactive = true;
+      //   app.stage.on("pointermove", movePlayerMouse);
+      window.addEventListener("keydown", keyDown);
+      window.addEventListener("keyup", keyUp);
+
+      app.ticker.add(gameLoop);
+
+      keysDiv = document.querySelector("#keys");
+    };
+
+    const doneLoading = () => {
+      player = new PIXI.Sprite.from(app.loader.resources.player.texture);
       player.anchor.set(0.5);
       player.x = app.view.width / 2;
       player.y = app.view.height / 2;
 
       app.stage.addChild(player);
-      app.stage.interactive = true;
-      app.stage.on("pointermove", movePlayer);
     };
 
-    const movePlayer = (event) => {
-      let position = event.data.global;
-
-      player.x = position.x;
-      player.y = position.y;
+    const keyDown = (e) => {
+      keys[e.keyCode] = true;
     };
+
+    const keyUp = (e) => {
+      keys[e.keyCode] = false;
+    };
+
+    const gameLoop = () => {
+      keysDiv.innerHTML = JSON.stringify(keys);
+
+      // KEYBOARD player move listener
+
+      // W
+      if (keys["87"]) {
+        player.y += -4;
+      }
+      // S
+      if (keys["83"]) {
+        player.y += 4;
+      }
+      // A
+      if (keys["65"]) {
+        player.x += -4;
+      }
+      // D
+      if (keys["68"]) {
+        player.x += 4;
+      }
+    };
+
+    // const movePlayerMouse = (event) => {
+    //   let position = event.data.global;
+
+    //   player.x = position.x;
+    //   player.y = position.y;
+    // };
   </script>
 </html>
